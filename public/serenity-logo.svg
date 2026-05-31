@@ -1,0 +1,31 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Serenity signal logo</title>
+  <desc id="desc">A white hair and blue eye emblem with rising candlesticks.</desc>
+  <rect width="512" height="512" rx="112" fill="#F7F8F4"/>
+  <circle cx="256" cy="256" r="202" fill="#10231F"/>
+  <path d="M106 319C123 182 220 88 382 80C315 111 285 163 285 163C337 133 398 135 450 167C343 155 306 235 306 235C356 214 405 224 444 253C364 249 321 282 301 319C262 394 166 406 106 319Z" fill="#FDFEFE"/>
+  <path d="M93 313C115 184 202 94 355 78C263 131 246 219 246 219C194 228 145 261 93 313Z" fill="#E8EEF1"/>
+  <path d="M129 354C181 400 256 398 323 345C268 367 205 368 129 354Z" fill="#C8D5DA"/>
+  <path d="M114 356C167 441 311 445 403 321C330 397 217 419 114 356Z" fill="#9ED9C6"/>
+  <path d="M300 242C328 209 381 201 418 226C384 221 346 227 316 255C309 252 304 248 300 242Z" fill="#07161D"/>
+  <ellipse cx="356" cy="244" rx="36" ry="29" fill="#F8FCFC"/>
+  <circle cx="356" cy="244" r="23" fill="#6BC9E8"/>
+  <circle cx="356" cy="244" r="12" fill="#123042"/>
+  <circle cx="348" cy="235" r="7" fill="#FFFFFF"/>
+  <path d="M298 239C331 195 394 195 431 230" stroke="#0B1D25" stroke-width="13" stroke-linecap="round"/>
+  <path d="M304 266C345 282 392 272 431 237" stroke="#0B1D25" stroke-width="8" stroke-linecap="round"/>
+  <path d="M202 400L247 364L287 378L326 328L365 343L417 283" stroke="#80D9C2" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <g stroke="#F7F8F4" stroke-width="7" stroke-linecap="round">
+    <path d="M237 361V410"/>
+    <path d="M282 342V401"/>
+    <path d="M326 304V370"/>
+    <path d="M369 298V372"/>
+    <path d="M414 250V337"/>
+  </g>
+  <rect x="222" y="375" width="30" height="27" rx="2" fill="#F7F8F4"/>
+  <rect x="267" y="350" width="30" height="43" rx="2" fill="#A6E4D3"/>
+  <rect x="311" y="319" width="30" height="43" rx="2" fill="#F7F8F4"/>
+  <rect x="354" y="315" width="30" height="49" rx="2" fill="#A6E4D3"/>
+  <rect x="399" y="274" width="30" height="49" rx="2" fill="#A6E4D3"/>
+  <circle cx="426" cy="270" r="13" fill="#7FD2BE" stroke="#F7F8F4" stroke-width="7"/>
+</svg>

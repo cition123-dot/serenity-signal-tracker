@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Serenity 股票信号工作台</title>
+    <style>
+      :root {
+        --ink: #18221f;
+        --muted: #66736f;
+        --paper: #f7f5ed;
+        --panel: rgba(255, 255, 255, 0.9);
+        --line: #d8e0da;
+        --mint: #1f8a70;
+        --green: #168b5a;
+        --red: #b94a48;
+        --amber: #c47f1f;
+        --blue: #315f9b;
+        --shadow: 0 24px 70px rgba(24, 34, 31, 0.14);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          linear-gradient(135deg, rgba(49, 95, 155, 0.12), transparent 35%),
+          radial-gradient(circle at 92% 10%, rgba(31, 138, 112, 0.18), transparent 27%),
+          radial-gradient(circle at 8% 92%, rgba(196, 127, 31, 0.13), transparent 26%),
+          var(--paper);
+        font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      button { font: inherit; }
+
+      .shell {
+        width: min(1480px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 28px 0;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .eyebrow {
+        margin: 0 0 7px;
+        color: var(--mint);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1, h2, h3, p { margin-top: 0; }
+
+      h1 {
+        margin-bottom: 0;
+        max-width: 760px;
+        font-size: clamp(34px, 5vw, 70px);
+        line-height: 0.92;
+      }
+
+      .brand-lockup {
+        display: grid;
+        grid-template-columns: 74px minmax(0, 1fr);
+        gap: 16px;
+        align-items: center;
+      }
+
+      .brand-logo {
+        width: 74px;
+        height: 74px;
+        border: 1px solid rgba(216, 224, 218, 0.95);
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: var(--shadow);
+      }
+
+      .collector {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--panel);
+        padding: 11px 15px;
+        box-shadow: var(--shadow);
+        color: var(--amber);
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: currentColor;
+        box-shadow: 0 0 0 6px rgba(196, 127, 31, 0.13);
+      }
+
+      .alert-strip {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .alert-title,
+      .alert,
+      .panel {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .alert-title {
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        font-weight: 900;
+      }
+
+      .alerts {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+      }
+
+      .alert {
+        min-width: 280px;
+        border-radius: 8px;
+        padding: 12px;
+      }
+
+      .alert strong,
+      .alert span { display: block; }
+
+      .alert span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.86fr) minmax(560px, 1.6fr) minmax(300px, 0.92fr);
+        gap: 16px;
+        align-items: start;
+      }
+
+      .panel {
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .panel-heading {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 14px;
+        border-bottom: 1px solid var(--line);
+        padding: 18px;
+      }
+
+      .panel-heading h2 {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .panel-heading p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .post-list {
+        display: grid;
+        gap: 12px;
+        max-height: 72vh;
+        overflow: auto;
+        padding: 14px;
+      }
+
+      .post-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcf8;
+        padding: 14px;
+      }
+
+      .meta {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .post-card p {
+        margin: 10px 0;
+        line-height: 1.48;
+      }
+
+      .summary {
+        border-left: 3px solid var(--mint);
+        color: var(--muted);
+        padding-left: 10px;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .ticker-row,
+      .tabs,
+      .sort-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .ticker-row { margin-top: 10px; }
+
+      .pill,
+      .tabs button,
+      .sort-row button {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        padding: 7px 10px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .tabs button,
+      .sort-row button {
+        cursor: pointer;
+      }
+
+      .tabs button.active,
+      .sort-row button.active {
+        border-color: var(--ink);
+        background: var(--ink);
+        color: #fff;
+      }
+
+      .sort-row {
+        border-bottom: 1px solid var(--line);
+        padding: 12px 18px;
+      }
+
+      .stock-table { overflow-x: auto; }
+
+      .stock-row {
+        display: grid;
+        grid-template-columns: minmax(150px, 1.35fr) minmax(100px, 0.85fr) minmax(96px, 0.8fr) minmax(92px, 0.76fr) 70px 70px;
+        align-items: center;
+        gap: 12px;
+        min-width: 720px;
+        width: 100%;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        background: transparent;
+        padding: 13px 18px;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .stock-row-head {
+        color: var(--muted);
+        background: rgba(31, 138, 112, 0.06);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        cursor: default;
+      }
+
+      .stock-row:not(.stock-row-head):hover,
+      .stock-row.selected {
+        background: #eef7f2;
+      }
+
+      .stock-row strong,
+      .stock-row small {
+        display: block;
+      }
+
+      .stock-row small {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      meter {
+        width: 72px;
+        height: 8px;
+      }
+
+      .count {
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .up { color: var(--green) !important; }
+      .down { color: var(--red) !important; }
+
+      .detail {
+        padding: 18px;
+      }
+
+      .detail-hero {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 14px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 18px;
+      }
+
+      .detail-hero h2 {
+        margin: 0;
+        font-size: 46px;
+        line-height: 1;
+      }
+
+      .price {
+        border-radius: 8px;
+        background: #f2f6f4;
+        padding: 10px 12px;
+        font-weight: 900;
+      }
+
+      .detail-block {
+        border-bottom: 1px solid var(--line);
+        padding: 18px 0;
+      }
+
+      .detail-block h3 {
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .detail-block p,
+      .detail-block li {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .source-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .source-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcf8;
+        padding: 12px;
+      }
+
+      .source-card blockquote {
+        margin: 7px 0 0;
+        color: var(--ink);
+        line-height: 1.48;
+      }
+
+      .detail-block ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding-top: 18px;
+      }
+
+      .metric-grid div {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcf8;
+        padding: 12px;
+      }
+
+      .metric-grid span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .metric-grid strong {
+        display: block;
+        margin-top: 4px;
+      }
+
+      .disclaimer {
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 1120px) {
+        .workspace { grid-template-columns: 1fr; }
+        .post-list { max-height: none; }
+      }
+
+      @media (max-width: 720px) {
+        .shell { width: min(100vw - 20px, 1480px); padding: 16px 0; }
+        .topbar, .alert-strip { grid-template-columns: 1fr; }
+        .alert-title { place-items: start; padding: 12px; }
+        .detail-hero, .panel-heading { flex-direction: column; }
+        .brand-lockup { grid-template-columns: 58px minmax(0, 1fr); gap: 12px; }
+        .brand-logo { width: 58px; height: 58px; border-radius: 18px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <img class="brand-logo" src="public/serenity-logo.svg" alt="Serenity 信号跟踪 logo" />
+          <div>
+            <p class="eyebrow">X monitor / @aleabitoreddit</p>
+            <h1>Serenity 信号跟踪</h1>
+          </div>
+        </div>
+        <div class="collector"><span class="dot"></span><span>预览模式</span></div>
+      </header>
+
+      <section class="alert-strip">
+        <div class="alert-title">站内提醒</div>
+        <div class="alerts" id="alerts"></div>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel">
+          <div class="panel-heading">
+            <h2>帖子流</h2>
+            <span class="meta" id="post-count"></span>
+          </div>
+          <div class="post-list" id="post-list"></div>
+        </aside>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>股票一览</h2>
+              <p>重点看最近多久提及、近期提及次数和总提及次数。</p>
+            </div>
+            <nav class="tabs" aria-label="近期窗口">
+              <button class="active" data-window="168">7天</button>
+              <button data-window="24">24小时</button>
+              <button data-window="720">30天</button>
+            </nav>
+          </div>
+          <div class="sort-row">
+            <button class="active" data-sort="lastMentionedAt">最近提及</button>
+            <button data-sort="recentMentionCount">近期次数</button>
+            <button data-sort="totalMentionCount">总次数</button>
+            <button data-sort="percentChange">涨跌幅</button>
+            <button data-sort="signalStrength">信号</button>
+          </div>
+          <div class="stock-table">
+            <div class="stock-row stock-row-head">
+              <span>股票</span>
+              <span>价格</span>
+              <span>信号</span>
+              <span>最近</span>
+              <span>近期</span>
+              <span>总计</span>
+            </div>
+            <div id="stock-rows"></div>
+          </div>
+        </section>
+
+        <aside class="panel detail" id="detail"></aside>
+      </section>
+
+      <p class="disclaimer">AI 分析仅用于整理公开信息，不构成投资建议；本页面不会连接券商或自动下单。</p>
+    </main>
+
+    <script>
+      const state = {
+        windowHours: 168,
+        sort: "lastMentionedAt",
+        selected: "NVDA"
+      };
+
+      const posts = [
+        {
+          id: "p1",
+          body: "Watching $NVDA into earnings. Datacenter demand still looks underappreciated.",
+          summary: "Serenity 正在关注 NVDA，核心理由是数据中心需求可能仍未被充分定价。",
+          postedAt: Date.now() - 12 * 60 * 1000,
+          tickers: ["NVDA"]
+        },
+        {
+          id: "p2",
+          body: "$TSLA feels more event-driven than fundamental this week. Size carefully.",
+          summary: "TSLA 更像短线事件驱动机会，但需要控制仓位。",
+          postedAt: Date.now() - 27 * 60 * 60 * 1000,
+          tickers: ["TSLA"]
+        },
+        {
+          id: "p3",
+          body: "Still like $AMD if AI server pull-through keeps improving. Not chasing gaps.",
+          summary: "AMD 的 AI 服务器需求是主要看点，但不适合追高。",
+          postedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
+          tickers: ["AMD"]
+        }
+      ];
+
+      const baseStocks = [
+        {
+          ticker: "NVDA",
+          companyName: "NVIDIA",
+          thesis: "数据中心需求和财报催化是 Serenity 最近关注 NVDA 的主要原因。",
+          advantages: ["AI 基础设施龙头", "数据中心需求强", "财报催化明确"],
+          risks: ["估值较高", "交易拥挤"],
+          signalStrength: 86,
+          lastMentionedAt: Date.now() - 12 * 60 * 1000,
+          mentionAgesHours: [0.2, 18, 90, 220, 410, 900, 1200, 1800, 2500],
+          latestPrice: 142.63,
+          percentChange: 1.52
+        },
+        {
+          ticker: "TSLA",
+          companyName: "Tesla",
+          thesis: "Serenity 对 TSLA 的措辞偏谨慎，当前更像事件驱动观察项。",
+          advantages: ["流动性高", "事件催化强"],
+          risks: ["波动大", "基本面分歧明显"],
+          signalStrength: 58,
+          lastMentionedAt: Date.now() - 27 * 60 * 60 * 1000,
+          mentionAgesHours: [27, 190, 460, 1100],
+          latestPrice: 248.11,
+          percentChange: -1.56
+        },
+        {
+          ticker: "AMD",
+          companyName: "Advanced Micro Devices",
+          thesis: "AI 服务器需求改善是 AMD 的优势，但 Serenity 明确提醒不要追高。",
+          advantages: ["AI 服务器拉动", "估值弹性", "替代供应链叙事"],
+          risks: ["追高风险", "竞争压力"],
+          signalStrength: 72,
+          lastMentionedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
+          mentionAgesHours: [72, 120, 510, 860, 1700, 2400],
+          latestPrice: 166.42,
+          percentChange: 0.84
+        }
+      ];
+
+      const alerts = [
+        ["Strong signal: NVDA", "12 分钟前出现高置信度看多语气，近期提及次数升至 3。"],
+        ["AMD 回到观察区", "近 7 天再次被提及，但帖子提醒不要追高。"]
+      ];
+
+      function stocks() {
+        return baseStocks.map((stock) => ({
+          ...stock,
+          recentMentionCount: stock.mentionAgesHours.filter((hours) => hours <= state.windowHours).length,
+          totalMentionCount: stock.mentionAgesHours.length
+        }));
+      }
+
+      function render() {
+        renderAlerts();
+        renderPosts();
+        renderStocks();
+        renderDetail(stocks().find((stock) => stock.ticker === state.selected) || stocks()[0]);
+      }
+
+      function renderAlerts() {
+        document.getElementById("alerts").innerHTML = alerts.map(([title, text]) => `
+          <article class="alert"><strong>${title}</strong><span>${text}</span></article>
+        `).join("");
+      }
+
+      function renderPosts() {
+        document.getElementById("post-count").textContent = `${posts.length} 条`;
+        document.getElementById("post-list").innerHTML = posts.map((post) => `
+          <article class="post-card">
+            <div class="meta">${relativeTime(post.postedAt)}</div>
+            <p>${post.body}</p>
+            <div class="summary">${post.summary}</div>
+            <div class="ticker-row">${post.tickers.map((ticker) => `<span class="pill">$${ticker}</span>`).join("")}</div>
+          </article>
+        `).join("");
+      }
+
+      function renderStocks() {
+        const sorted = stocks().sort((a, b) => {
+          if (state.sort === "recentMentionCount") return b.recentMentionCount - a.recentMentionCount;
+          if (state.sort === "totalMentionCount") return b.totalMentionCount - a.totalMentionCount;
+          if (state.sort === "percentChange") return b.percentChange - a.percentChange;
+          if (state.sort === "signalStrength") return b.signalStrength - a.signalStrength;
+          return b.lastMentionedAt - a.lastMentionedAt;
+        });
+
+        document.getElementById("stock-rows").innerHTML = sorted.map((stock) => `
+          <button class="stock-row ${state.selected === stock.ticker ? "selected" : ""}" data-ticker="${stock.ticker}">
+            <span><strong>${stock.ticker}</strong><small>${stock.companyName}</small></span>
+            <span><strong>$${stock.latestPrice.toFixed(2)}</strong><small class="${stock.percentChange >= 0 ? "up" : "down"}">${signed(stock.percentChange)}%</small></span>
+            <span><meter min="0" max="100" value="${stock.signalStrength}"></meter><small>${stock.signalStrength}</small></span>
+            <span>${relativeTime(stock.lastMentionedAt)}</span>
+            <span class="count">${stock.recentMentionCount}</span>
+            <span class="count">${stock.totalMentionCount}</span>
+          </button>
+        `).join("");
+
+        document.querySelectorAll("[data-ticker]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.selected = button.dataset.ticker;
+            render();
+          });
+        });
+      }
+
+      function renderDetail(stock) {
+        const relatedPosts = posts
+          .filter((post) => post.tickers.includes(stock.ticker))
+          .sort((a, b) => b.postedAt - a.postedAt)
+          .slice(0, 3);
+
+        document.getElementById("detail").innerHTML = `
+          <div class="detail-hero">
+            <div>
+              <p class="eyebrow">Selected signal</p>
+              <h2>${stock.ticker}</h2>
+              <span class="meta">${stock.companyName}</span>
+            </div>
+            <div class="price ${stock.percentChange >= 0 ? "up" : "down"}">${signed(stock.percentChange)}%</div>
+          </div>
+          <section class="detail-block">
+            <h3>AI 滚动总结</h3>
+            <p>${stock.thesis}</p>
+            <div class="source-list">
+              ${relatedPosts.map((post) => `
+                <article class="source-card">
+                  <div class="meta">${relativeTime(post.postedAt)} · ${post.tickers.map((ticker) => `$${ticker}`).join(" ")}</div>
+                  <blockquote>${post.body}</blockquote>
+                </article>
+              `).join("") || `<article class="source-card"><div class="meta">暂无近期原文</div></article>`}
+            </div>
+          </section>
+          <section class="detail-block">
+            <h3>优势特点</h3>
+            <ul>${stock.advantages.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>
+          <section class="detail-block">
+            <h3>主要风险</h3>
+            <ul>${stock.risks.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>
+          <section class="metric-grid">
+            <div><span>最近提及</span><strong>${relativeTime(stock.lastMentionedAt)}</strong></div>
+            <div><span>近期提及</span><strong>${stock.recentMentionCount}</strong></div>
+            <div><span>总提及</span><strong>${stock.totalMentionCount}</strong></div>
+            <div><span>信号强度</span><strong>${stock.signalStrength}</strong></div>
+          </section>
+        `;
+      }
+
+      function relativeTime(time) {
+        const minutes = Math.max(1, Math.round((Date.now() - time) / 60000));
+        if (minutes < 60) return `${minutes} 分钟前`;
+        const hours = Math.round(minutes / 60);
+        if (hours < 48) return `${hours} 小时前`;
+        return `${Math.round(hours / 24)} 天前`;
+      }
+
+      function signed(value) {
+        return `${value >= 0 ? "+" : ""}${value.toFixed(2)}`;
+      }
+
+      document.querySelectorAll("[data-window]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.windowHours = Number(button.dataset.window);
+          document.querySelectorAll("[data-window]").forEach((item) => item.classList.toggle("active", item === button));
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-sort]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.sort = button.dataset.sort;
+          document.querySelectorAll("[data-sort]").forEach((item) => item.classList.toggle("active", item === button));
+          render();
+        });
+      });
+
+      render();
+    </script>
+  </body>
+</html>

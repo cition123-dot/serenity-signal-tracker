@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "serenity-signal-tracker",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-12-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "serenity-signal-tracker"
+    }
+  ],
+  "vars": {
+    "DEEPSEEK_MODEL": "deepseek-v4-pro"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

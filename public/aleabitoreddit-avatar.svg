@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AleaBitOfReddit profile avatar</title>
+  <desc id="desc">A compact profile avatar with white hair, a blue eye, and green market accents.</desc>
+  <rect width="512" height="512" rx="128" fill="#F7FAF6"/>
+  <circle cx="256" cy="258" r="204" fill="#0B201B"/>
+  <path d="M88 312C112 177 212 84 389 78C309 111 271 174 271 174C325 135 397 136 452 178C351 159 301 223 286 263C255 346 155 395 88 312Z" fill="#FAFCFA"/>
+  <path d="M94 314C126 201 211 105 357 83C280 137 248 211 244 258C189 265 139 284 94 314Z" fill="#DDE8EA"/>
+  <path d="M113 348C169 420 304 431 402 319C329 380 229 401 113 348Z" fill="#9DDAC7"/>
+  <path d="M293 241C325 204 382 198 424 229C384 219 344 225 312 258C303 254 297 248 293 241Z" fill="#07161D"/>
+  <ellipse cx="356" cy="244" rx="38" ry="30" fill="#F8FCFC"/>
+  <circle cx="356" cy="244" r="23" fill="#66C7E8"/>
+  <circle cx="356" cy="244" r="12" fill="#102C3C"/>
+  <circle cx="348" cy="235" r="7" fill="#FFFFFF"/>
+  <path d="M295 238C330 195 396 197 432 230" stroke="#0B1D25" stroke-width="13" stroke-linecap="round"/>
+  <path d="M306 266C347 284 396 274 432 238" stroke="#0B1D25" stroke-width="8" stroke-linecap="round"/>
+  <path d="M152 371C204 403 289 390 348 331" stroke="#BDE9DD" stroke-width="18" stroke-linecap="round"/>
+  <path d="M360 360L388 324L414 346L438 306" stroke="#32C79C" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

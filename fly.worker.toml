@@ -1,0 +1,22 @@
+app = "serenity-x-collector"
+primary_region = "sjc"
+
+[build]
+  dockerfile = "worker/Dockerfile"
+
+[env]
+  INGEST_URL = "https://serenity-signal-tracker.netlify.app/api/ingest"
+  PLAYWRIGHT_PROFILE_DIR = "/data/playwright-profile"
+  COLLECTOR_INTERVAL_MS = "1800000"
+  HEADLESS = "true"
+  BACKFILL_ON_START_DAYS = "7"
+  MAX_BACKFILL_SCROLLS = "40"
+
+[[mounts]]
+  source = "serenity_x_data"
+  destination = "/data"
+
+[[vm]]
+  memory = "1024mb"
+  cpu_kind = "shared"
+  cpus = 1

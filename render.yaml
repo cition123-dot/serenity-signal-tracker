@@ -1,0 +1,28 @@
+services:
+  - type: worker
+    name: serenity-x-collector
+    runtime: docker
+    dockerfilePath: ./worker/Dockerfile
+    plan: free
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: INGEST_URL
+        value: https://serenity-signal-tracker.serenity-signal-tracker.workers.dev/api/ingest
+      - key: PLAYWRIGHT_PROFILE_DIR
+        value: /tmp/playwright-profile
+      - key: COLLECTOR_INTERVAL_MS
+        value: "1800000"
+      - key: HEADLESS
+        value: "true"
+      - key: BACKFILL_ON_START_DAYS
+        value: "0"
+      - key: MAX_BACKFILL_SCROLLS
+        value: "40"
+      - key: WORKER_INGEST_SECRET
+        sync: false
+      - key: X_AUTH_TOKEN
+        sync: false
+      - key: X_CT0
+        sync: false

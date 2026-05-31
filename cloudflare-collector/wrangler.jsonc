@@ -1,0 +1,20 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "serenity-x-collector",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-12-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "browser": {
+    "binding": "BROWSER"
+  },
+  "triggers": {
+    "crons": ["*/30 * * * *"]
+  },
+  "vars": {
+    "INGEST_URL": "https://serenity-signal-tracker.serenity-signal-tracker.workers.dev/api/ingest",
+    "MAX_SCROLLS": "2"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
