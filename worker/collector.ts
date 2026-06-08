@@ -9,6 +9,8 @@ const INTERVAL_MS = Number(process.env.COLLECTOR_INTERVAL_MS || 1800000);
 const BACKFILL_ON_START_DAYS = Number(process.env.BACKFILL_ON_START_DAYS || 0);
 const MAX_BACKFILL_SCROLLS = Number(process.env.MAX_BACKFILL_SCROLLS || 40);
 const RUN_ONCE = process.env.RUN_ONCE === "true";
+const FETCH_TIMEOUT_MS = Number(process.env.COLLECTOR_FETCH_TIMEOUT_MS || 15000);
+const RUN_ONCE_MAX_POSTS = Number(process.env.RUN_ONCE_MAX_POSTS || 8);
 
 type CollectedPost = {
   xPostId: string;
@@ -37,7 +39,8 @@ async function main() {
     await runCollection(page, {
       label: process.env.COLLECTOR_LABEL || "one-shot",
       since: undefined,
-      maxScrolls: 2
+      maxScrolls: 1,
+      maxPosts: RUN_ONCE_MAX_POSTS
     });
     await context.close();
     return;
@@ -57,7 +60,7 @@ async function main() {
 
 async function runCollection(
   page: Page,
-  options: { label: string; since?: Date; maxScrolls: number }
+  options: { label: string; since?: Date; maxScrolls: number; maxPosts?: number }
 ) {
     try {
       const posts = await collectPosts(page, options);
@@ -88,9 +91,9 @@ async function runCollection(
 
 async function collectPosts(
   page: Page,
-  options: { since?: Date; maxScrolls: number }
+  options: { since?: Date; maxScrolls: number; maxPosts?: number }
 ): Promise<CollectedPost[]> {
-  await page.goto(TARGET_URL, { waitUntil: "domcontentloaded" });
+  await page.goto(TARGET_URL, { waitUntil: "domcontentloaded", timeout: 20000 });
   await page.waitForTimeout(4000);
 
   const loginLink = page.getByText(/log in|sign in/i).first();
@@ -132,7 +135,7 @@ async function collectPosts(
   const posts = Array.from(collected.values()).sort(
     (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime()
   );
-  return hydrateFullPostBodies(page, posts);
+  return hydrateFullPostBodies(page, options.maxPosts ? posts.slice(0, options.maxPosts) : posts);
 }
 
 async function hydrateFullPostBodies(page: Page, posts: CollectedPost[]): Promise<CollectedPost[]> {
@@ -160,11 +163,11 @@ async function hydrateFullPostBodies(page: Page, posts: CollectedPost[]): Promis
 }
 
 async function readFullPostFromDetail(page: Page, url: string) {
-  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-  await page.waitForLoadState("networkidle", { timeout: 10000 }).catch(() => undefined);
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15000 });
+  await page.waitForLoadState("load", { timeout: 5000 }).catch(() => undefined);
 
   const article = page.locator("article").first();
-  if (!(await article.isVisible({ timeout: 20000 }).catch(() => false))) {
+  if (!(await article.isVisible({ timeout: 8000 }).catch(() => false))) {
     return "";
   }
 
@@ -276,7 +279,8 @@ async function ingest(post: CollectedPost) {
       "content-type": "application/json",
       "x-worker-secret": SECRET
     },
-    body: JSON.stringify(post)
+    body: JSON.stringify(post),
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
   });
 
   if (!response.ok) {
@@ -299,7 +303,8 @@ async function reportStatus(status: string, message: string, lastSuccessAt?: str
       message,
       lastCheckedAt: new Date().toISOString(),
       lastSuccessAt
-    })
+    }),
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
   }).catch(() => undefined);
 }
 
