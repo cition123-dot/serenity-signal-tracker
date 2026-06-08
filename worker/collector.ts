@@ -8,6 +8,7 @@ const SECRET = process.env.WORKER_INGEST_SECRET || "";
 const INTERVAL_MS = Number(process.env.COLLECTOR_INTERVAL_MS || 1800000);
 const BACKFILL_ON_START_DAYS = Number(process.env.BACKFILL_ON_START_DAYS || 0);
 const MAX_BACKFILL_SCROLLS = Number(process.env.MAX_BACKFILL_SCROLLS || 40);
+const RUN_ONCE = process.env.RUN_ONCE === "true";
 
 type CollectedPost = {
   xPostId: string;
@@ -30,6 +31,16 @@ async function main() {
       since: new Date(Date.now() - BACKFILL_ON_START_DAYS * 24 * 60 * 60 * 1000),
       maxScrolls: MAX_BACKFILL_SCROLLS
     });
+  }
+
+  if (RUN_ONCE) {
+    await runCollection(page, {
+      label: process.env.COLLECTOR_LABEL || "one-shot",
+      since: undefined,
+      maxScrolls: 2
+    });
+    await context.close();
+    return;
   }
 
   while (true) {
