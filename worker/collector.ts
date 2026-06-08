@@ -10,7 +10,7 @@ const BACKFILL_ON_START_DAYS = Number(process.env.BACKFILL_ON_START_DAYS || 0);
 const MAX_BACKFILL_SCROLLS = Number(process.env.MAX_BACKFILL_SCROLLS || 40);
 const RUN_ONCE = process.env.RUN_ONCE === "true";
 const FETCH_TIMEOUT_MS = Number(process.env.COLLECTOR_FETCH_TIMEOUT_MS || 15000);
-const RUN_ONCE_MAX_POSTS = Number(process.env.RUN_ONCE_MAX_POSTS || 8);
+const RUN_ONCE_MAX_POSTS = Number(process.env.RUN_ONCE_MAX_POSTS || 5);
 
 type CollectedPost = {
   xPostId: string;
